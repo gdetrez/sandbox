@@ -6,38 +6,14 @@ jobs:
   track_pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Get project data
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          LOGIN: gdetrez
-          PROJECT_NUMBER: 4
-        run: |
-          gh api graphql -f query='
-            query($login: String!, $number: Int!) {
-              user(login: $login){
-                projectNext(number: $number) {
-                  id
-                  fields(first:20) {
-                    nodes {
-                      id
-                      name
-                      settings
-                    }
-                  }
-                }
-              }
-            }' -f login=$LOGIN -F number=$PROJECT_NUMBER > project_data.json
-          cat project_data.json
-
-          echo 'PROJECT_ID='$(jq '.data.user.projectNext.id' project_data.json) >> $GITHUB_ENV
-          echo 'DATE_FIELD_ID='$(jq '.data.user.projectNext.fields.nodes[] | select(.name== "Date posted") | .id' project_data.json) >> $GITHUB_ENV
-          echo 'STATUS_FIELD_ID='$(jq '.data.user.projectNext.fields.nodes[] | select(.name== "Status") | .id' project_data.json) >> $GITHUB_ENV
-          echo 'TODO_OPTION_ID='$(jq '.data.user.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id' project_data.json) >> $GITHUB_ENV
-
       - name: Add PR to project
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           PR_ID: ${{ github.event.pull_request.node_id }}
+          LOGIN: gdetrez
+          PROJECT_ID: MDExOlByb2plY3ROZXh0MzM1MQ==
+          STATUS_FIELD_ID: MDE2OlByb2plY3ROZXh0RmllbGQyNzYxMA==
+          IN_REVIEW_OPTION_ID: 16912349
         run: |
           item_id="$( gh api graphql -f query='
             mutation($project:ID!, $pr:ID!) {
@@ -47,13 +23,6 @@ jobs:
                 }
               }
             }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
-          
-          echo 'ITEM_ID='$item_id >> $GITHUB_ENV
-
-      - name: Set fields
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: |
           gh api graphql -f query='
             mutation (
               $project: ID!
@@ -71,5 +40,5 @@ jobs:
                   id
                   }
               }
-            }' -f project=$PROJECT_ID -f item=$ITEM_ID -f status_field=$STATUS_FIELD_ID -f status_value=${{ env.TODO_OPTION_ID }}
+            }' -f project=$PROJECT_ID -f item=$item_id -f status_field=$STATUS_FIELD_ID -f status_value=$IN_REVIEW_OPTION_ID
 
