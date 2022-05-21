@@ -1,1 +1,3 @@
 {"timestamp":"1653141535","reviewRef":"refs/heads/gregoire/bar","targetRef":"refs/heads/main","requester":"gregoire@fripost.org","description":"Remove stuff from readme","baseCommit":"e4c69430f26a61630d2f1843d69760b9e765f0a4"}
+
+{"timestamp":"1653141535","reviewRef":"refs/heads/gregoire/bar","targetRef":"refs/heads/main","requester":"gregoire@fripost.org","description":"Remove stuff from readme","baseCommit":"e4c69430f26a61630d2f1843d69760b9e765f0a4","alias":"80f4d9c03989dff324bbc2073ad94a1d99f621f6"}
