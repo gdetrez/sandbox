@@ -3,3 +3,5 @@
 {"timestamp":"1653141038","agent":"barcd"}
 
 {"timestamp":"1653141038","agent":"barcd","status":"success"}
+
+{"timestamp":"1653141038","agent":"foocd","status":"failure"}
